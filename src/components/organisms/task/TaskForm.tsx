@@ -1,33 +1,88 @@
 import { FC, memo, useState } from "react";
-import { Box, Button, Flex, Input, Stack, Text } from "@chakra-ui/react";
+import { v4 as uuidv4 } from "uuid";
+import { useForm } from "react-hook-form";
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  Input,
+  Stack,
+  Text,
+  Textarea,
+} from "@chakra-ui/react";
 import { Calendar } from "../../atoms/Calendar";
+import { Task } from "../../../domain/task";
 
+export const TaskForm: FC = memo(() => {
+  // form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Task>();
 
-export const TaskForm: FC<Props> = memo(() => {
-  const [title, setTitle] = useState('');
-  const initialDate = new Date()
+  const onSubmit = (data: Task) => {
+    const task: Task = {
+      ...data,
+      id: uuidv4(),
+      startDate: startDate || new Date(),
+      endDate: endDate || new Date(),
+      state: "未対応",
+      totalDuration: 0,
+      taskRecords: [],
+    };
+    console.log("タスクを追加:", task);
+  };
+  // カレンダー
+  const initialDate = new Date();
   const [startDate, setStartDate] = useState<Date | null>(initialDate);
   const [endDate, setEndDate] = useState<Date | null>(initialDate);
-  const handleStartChange = (date : Date | null) => {
-    setStartDate(date)
-  }
-  const handleEndChange = (date : Date | null) => {
-    setEndDate(date)
-  }
-  console.log(title);
+  const handleStartChange = (date: Date | null) => {
+    setStartDate(date);
+  };
+  const handleEndChange = (date: Date | null) => {
+    setEndDate(date);
+  };
+
   return (
     <Box w={"40%"}>
-      
-      <Stack>
-        <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="タスク名を入力" />
-        <Flex>
-          <Text>開始日：</Text><Calendar date={startDate} onChange={handleStartChange}/>
-        </Flex>
-        <Flex>
-          <Text>終了日：</Text><Calendar date={endDate} onChange={handleEndChange} />
-        </Flex>
-        <Button colorScheme="blue">登録</Button>
-      </Stack>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Stack>
+          <FormControl isInvalid={!!errors.title}>
+            <Input
+              {...register("title", { required: "タイトルを入力してください" })}
+            />
+            <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.content}>
+            <Textarea
+              {...register("content", { required: "内容を入力してください" })}
+            />
+            <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
+          </FormControl>
+
+          <Flex alignItems="center" gap={2}>
+            <Text>開始日：</Text>
+            <Calendar date={startDate} onChange={handleStartChange} />
+          </Flex>
+          <Flex alignItems="center" gap={2}>
+            <Text>終了日：</Text>
+            <Calendar date={endDate} onChange={handleEndChange} />
+          </Flex>
+
+          <Flex alignItems="center" gap={2}>
+            <Text>目標時間：</Text>
+            <Input w={"100px"} type="number" {...register("targetTime", {})} />
+            <Text>時間</Text>
+          </Flex>
+          <Button colorScheme="blue" type="submit">
+            登録
+          </Button>
+        </Stack>
+      </form>
     </Box>
   );
 });
