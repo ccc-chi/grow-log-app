@@ -1,12 +1,12 @@
+import { GanttChart } from "./components/organisms/gantt/GanttChart";
 import { TaskForm } from "./components/organisms/task/TaskForm";
-import { TaskList } from "./components/organisms/task/TaskList";
 
 function App() {
   return (
     <>
-      <h1>タスク管理 × 学習記録 Webアプリ</h1>
+      <h1>タスク管理 × 記録 Webアプリ</h1>
+      <GanttChart />
       <TaskForm />
-      <TaskList />
     </>
   );
 }

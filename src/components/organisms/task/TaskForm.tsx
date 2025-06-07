@@ -15,26 +15,35 @@ import {
 import { Calendar } from "../../atoms/Calendar";
 import { Task } from "../../../domain/task";
 
+type TaskFormInput = {
+  title: string;
+  content: string;
+  targetTime: string;
+};
+
 export const TaskForm: FC = memo(() => {
   // form
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Task>();
-
-  const onSubmit = (data: Task) => {
+  } = useForm<TaskFormInput>();
+  const onSubmit = (data: TaskFormInput) => {
     const task: Task = {
-      ...data,
       id: uuidv4(),
+      title: data.title,
+      content: data.content,
       startDate: startDate || new Date(),
       endDate: endDate || new Date(),
+      targetTime: Number(data.targetTime),
       state: "未対応",
       totalDuration: 0,
       taskRecords: [],
     };
     console.log("タスクを追加:", task);
+    localStorage.setItem(task.id, JSON.stringify(task));
   };
+
   // カレンダー
   const initialDate = new Date();
   const [startDate, setStartDate] = useState<Date | null>(initialDate);
