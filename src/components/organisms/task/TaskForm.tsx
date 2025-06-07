@@ -1,5 +1,4 @@
 import { FC, memo, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { useForm } from "react-hook-form";
 import {
   Box,
@@ -13,36 +12,20 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { Calendar } from "../../atoms/Calendar";
-import { Task } from "../../../domain/task";
+import { TaskFormInput } from "../../../domain/ganttTask";
 
-type TaskFormInput = {
-  title: string;
-  content: string;
-  targetTime: string;
+type Props = {
+  onSubmit: (data: TaskFormInput) => void;
 };
 
-export const TaskForm: FC = memo(() => {
+export const TaskForm: FC<Props> = memo((props) => {
+  const { onSubmit } = props;
   // form
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<TaskFormInput>();
-  const onSubmit = (data: TaskFormInput) => {
-    const task: Task = {
-      id: uuidv4(),
-      title: data.title,
-      content: data.content,
-      startDate: startDate || new Date(),
-      endDate: endDate || new Date(),
-      targetTime: Number(data.targetTime),
-      state: "未対応",
-      totalDuration: 0,
-      taskRecords: [],
-    };
-    console.log("タスクを追加:", task);
-    localStorage.setItem(task.id, JSON.stringify(task));
-  };
 
   // カレンダー
   const initialDate = new Date();
