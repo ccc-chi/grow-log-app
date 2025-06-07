@@ -1,8 +1,7 @@
 import { FC, memo } from "react";
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { Gantt, Task } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
-
 
 type Props = {
   ganttTasks: Task[];
@@ -11,8 +10,12 @@ type Props = {
 export const GanttChart: FC<Props> = memo((props) => {
   const { ganttTasks } = props;
   return (
-    <Box>
-      <Gantt tasks={ganttTasks} />
+    <Box my={4}>
+      {ganttTasks.length > 0 ? (
+        <Gantt tasks={ganttTasks} />
+      ) : (
+        <Text>タスクを追加してください。</Text>
+      )}
     </Box>
   );
 });
