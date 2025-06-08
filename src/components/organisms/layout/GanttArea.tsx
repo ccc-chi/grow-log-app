@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useState } from "react";
+import { FC, memo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { GanttChart } from "../gantt/GanttChart";
@@ -7,8 +7,19 @@ import { TaskFormInput } from "../../../domain/ganttTask";
 import { Task } from "gantt-task-react";
 
 export const GanttArea: FC = memo(() => {
-  const [ganttTasks, setGanttTasks] = useState<Task[]>([]);
+  const [ganttTasks, setGanttTasks] = useState<Task[]>(() => {
+    // localStorageにデータがあれば設定する
+    const stored = localStorage.getItem("ganttTasks");
+    const perse = JSON.parse(stored || "[]");
+    console.log("ganttTasksの変換まえ:", perse);
+    return perse.map((task: any) => ({
+      ...task,
+      start: new Date(task.start),
+      end: new Date(task.end),
+    }));
+  });
 
+  console.log("ganttTasks:", ganttTasks);
   const onSubmit = (data: TaskFormInput) => {
     const task: Task = {
       start: data.start || new Date(),
@@ -30,7 +41,7 @@ export const GanttArea: FC = memo(() => {
     };
     setGanttTasks((tasks) => [...tasks, task]);
     console.log("タスクを追加:", ganttTasks);
-    localStorage.setItem(task.id, JSON.stringify(task));
+    localStorage.setItem("ganttTasks", JSON.stringify([...ganttTasks, task]));
   };
 
   return (

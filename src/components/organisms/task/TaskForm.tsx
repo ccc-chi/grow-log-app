@@ -1,5 +1,5 @@
 import { FC, memo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Form, useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -24,6 +24,7 @@ export const TaskForm: FC<Props> = memo((props) => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<TaskFormInput>();
 
@@ -33,17 +34,20 @@ export const TaskForm: FC<Props> = memo((props) => {
   const [endDate, setEndDate] = useState<Date | null>(initialDate);
   const handleStartChange = (date: Date | null) => {
     setStartDate(date);
+    setValue("start", date);
   };
   const handleEndChange = (date: Date | null) => {
     setEndDate(date);
+    setValue("end", date);
   };
 
   return (
-    <Box w={"40%"}>
+    <Box maxW={"500px"}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack>
           <FormControl isInvalid={!!errors.title}>
             <Input
+              placeholder="タイトル"
               {...register("title", { required: "タイトルを入力してください" })}
             />
             <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
@@ -51,6 +55,7 @@ export const TaskForm: FC<Props> = memo((props) => {
 
           <FormControl isInvalid={!!errors.content}>
             <Textarea
+              placeholder="内容"
               {...register("content", { required: "内容を入力してください" })}
             />
             <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
@@ -65,11 +70,11 @@ export const TaskForm: FC<Props> = memo((props) => {
             <Calendar date={endDate} onChange={handleEndChange} />
           </Flex>
 
-          <Flex alignItems="center" gap={2}>
+          {/* <Flex alignItems="center" gap={2}>
             <Text>目標時間：</Text>
             <Input w={"100px"} type="number" {...register("targetTime", {})} />
             <Text>時間</Text>
-          </Flex>
+          </Flex> */}
           <Button colorScheme="blue" type="submit">
             登録
           </Button>
