@@ -1,12 +1,23 @@
 import { FC, memo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import {
+  Button,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
+import { Task } from "gantt-task-react";
 
 import { GanttChart } from "../gantt/GanttChart";
 import { TaskForm } from "../task/TaskForm";
 import { TaskFormInput } from "../../../domain/ganttTask";
-import { Task } from "gantt-task-react";
 
 export const GanttArea: FC = memo(() => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [ganttTasks, setGanttTasks] = useState<Task[]>(() => {
     // localStorageにデータがあれば設定する
     const stored = localStorage.getItem("ganttTasks");
@@ -27,7 +38,7 @@ export const GanttArea: FC = memo(() => {
       name: data.title,
       id: uuidv4(),
       type: "task",
-      progress: 0,
+      progress: 45,
       isDisabled: true,
       styles: {
         progressColor: "#ffbb54",
@@ -44,10 +55,29 @@ export const GanttArea: FC = memo(() => {
     localStorage.setItem("ganttTasks", JSON.stringify([...ganttTasks, task]));
   };
 
+  //-- ガントバーがクリックされたときの処理
+  const [clickedTask, setClickedTask] = useState<Task | null>(null);
+
+  const ganttBarClick = (task: Task) => {
+    setClickedTask(task);
+    console.log("タスク格納", clickedTask);
+    onOpen();
+  };
+
   return (
     <>
-      <GanttChart ganttTasks={ganttTasks} />
-      <TaskForm onSubmit={onSubmit} />
+      <GanttChart ganttTasks={ganttTasks} ganttBarClick={ganttBarClick} />
+      <Button onClick={onOpen}>タスクを登録</Button>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>タスク登録</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <TaskForm onSubmit={onSubmit} clickedTask={clickedTask} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 });

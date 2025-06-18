@@ -5,16 +5,20 @@ import "gantt-task-react/dist/index.css";
 
 type Props = {
   ganttTasks: Task[];
+  ganttBarClick?: (task: Task) => void;
 };
 
 export const GanttChart: FC<Props> = memo((props) => {
-  const { ganttTasks } = props;
+  const { ganttTasks, ganttBarClick } = props;
   return (
     <Box my={4}>
       {ganttTasks.length > 0 ? (
-        <Gantt tasks={ganttTasks} />
+        <Gantt tasks={ganttTasks} onClick={ganttBarClick} />
       ) : (
-        <Text>タスクを追加してください。</Text>
+        <div>
+          <Text>タスクを追加してください。</Text>
+          <Text>タスクを追加するとガントチャートが表示されます。</Text>
+        </div>
       )}
     </Box>
   );

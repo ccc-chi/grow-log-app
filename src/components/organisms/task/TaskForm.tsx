@@ -1,5 +1,5 @@
 import { FC, memo, useState } from "react";
-import { Form, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -16,10 +16,11 @@ import { TaskFormInput } from "../../../domain/ganttTask";
 
 type Props = {
   onSubmit: (data: TaskFormInput) => void;
+  clickedTask: TaskFormInput | null;
 };
 
 export const TaskForm: FC<Props> = memo((props) => {
-  const { onSubmit } = props;
+  const { onSubmit, clickedTask } = props;
   // form
   const {
     register,
@@ -41,6 +42,8 @@ export const TaskForm: FC<Props> = memo((props) => {
     setValue("end", date);
   };
 
+  // ガントバーのデータを表示
+  console.log("clickedTask:", clickedTask);
   return (
     <Box maxW={"500px"}>
       <form onSubmit={handleSubmit(onSubmit)}>
