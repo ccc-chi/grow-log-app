@@ -8,7 +8,7 @@ type Props = {
   onChange: (date: Date | null) => void;
 };
 
-export const Calendar: FC<Props> = memo((props) => {
+export const CalendarDatePicker: FC<Props> = memo((props) => {
   const { date, onChange } = props;
   return (
     <DatePicker

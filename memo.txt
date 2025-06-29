@@ -1,0 +1,12 @@
+表記：
+ガントチャートに表示しているものは「タスク」と呼ぶ = Tasks
+記録していく子課題のことは「記録」と呼ぶ = Records
+
+
+全体のタスクの入れ物「ganttTasks」
+ganttTasksはGanttAreaで設定し、propsで孫へ渡す
+ーーー
+GanttArea（親）
+└─ GanttChart（子）
+   └─ TaskPreview（孫）
+ーーー

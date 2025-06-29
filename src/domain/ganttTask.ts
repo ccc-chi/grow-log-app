@@ -17,4 +17,5 @@ export type GanttTask = {
     progressColor?: string;
     progressSelectedColor?: string;
   };
+  content?: string;
 };

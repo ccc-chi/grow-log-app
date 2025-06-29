@@ -1,49 +1,31 @@
-import { FC, memo, useState } from "react";
+import { FC, memo } from "react";
 import { useForm } from "react-hook-form";
 import {
   Box,
   Button,
-  Flex,
   FormControl,
   FormErrorMessage,
   Input,
   Stack,
-  Text,
   Textarea,
 } from "@chakra-ui/react";
-import { Calendar } from "../../atoms/Calendar";
 import { TaskFormInput } from "../../../domain/ganttTask";
+import { InputStartDate } from "../../atoms/Calender/InputStartDate";
+import { InputEndDate } from "../../atoms/Calender/InputEndDate";
 
 type Props = {
   onSubmit: (data: TaskFormInput) => void;
-  clickedTask: TaskFormInput | null;
 };
 
 export const TaskForm: FC<Props> = memo((props) => {
-  const { onSubmit, clickedTask } = props;
+  const { onSubmit } = props;
   // form
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<TaskFormInput>();
 
-  // カレンダー
-  const initialDate = new Date();
-  const [startDate, setStartDate] = useState<Date | null>(initialDate);
-  const [endDate, setEndDate] = useState<Date | null>(initialDate);
-  const handleStartChange = (date: Date | null) => {
-    setStartDate(date);
-    setValue("start", date);
-  };
-  const handleEndChange = (date: Date | null) => {
-    setEndDate(date);
-    setValue("end", date);
-  };
-
-  // ガントバーのデータを表示
-  console.log("clickedTask:", clickedTask);
   return (
     <Box maxW={"500px"}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -64,14 +46,8 @@ export const TaskForm: FC<Props> = memo((props) => {
             <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
           </FormControl>
 
-          <Flex alignItems="center" gap={2}>
-            <Text>開始日：</Text>
-            <Calendar date={startDate} onChange={handleStartChange} />
-          </Flex>
-          <Flex alignItems="center" gap={2}>
-            <Text>終了日：</Text>
-            <Calendar date={endDate} onChange={handleEndChange} />
-          </Flex>
+          <InputStartDate />
+          <InputEndDate />
 
           {/* <Flex alignItems="center" gap={2}>
             <Text>目標時間：</Text>
