@@ -24,6 +24,7 @@ export const TaskForm: FC<Props> = memo((props) => {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<TaskFormInput>();
 
   return (
@@ -46,8 +47,8 @@ export const TaskForm: FC<Props> = memo((props) => {
             <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
           </FormControl>
 
-          <InputStartDate />
-          <InputEndDate />
+          <InputStartDate setValue={setValue} />
+          <InputEndDate setValue={setValue} />
 
           {/* <Flex alignItems="center" gap={2}>
             <Text>目標時間：</Text>
