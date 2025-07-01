@@ -10,31 +10,50 @@ import {
   ModalHeader,
   Text,
 } from "@chakra-ui/react";
-import { GanttTask, serializeTask } from "../../../domain/ganttTask";
-import { InputStartDate } from "../../atoms/Calender/InputStartDate";
-import { InputEndDate } from "../../atoms/Calender/InputEndDate";
+import { useForm } from "react-hook-form";
+
+import { DateInput } from "../../atoms/Calender/DateInput";
+import {
+  GanttTask,
+  serializeTask,
+  TaskFormInput,
+} from "../../../domain/ganttTask";
 
 type Props = {
   clickedTask: GanttTask | null;
   ganttTasks: GanttTask[];
   setGanttTasks: React.Dispatch<React.SetStateAction<GanttTask[]>>;
 };
+
 //-- ガントバーでタスクをクリック時に表示
 export const TaskPreview: FC<Props> = memo((props) => {
   const { clickedTask, ganttTasks, setGanttTasks } = props;
   const [editTask, setEditTask] = useState<GanttTask | null>(clickedTask);
   const [progress, setProgress] = useState<number>(clickedTask?.progress || 0);
+  // RHF 初期値を設定
+  const { handleSubmit, control, getValues } = useForm<TaskFormInput>({
+    defaultValues: {
+      start: clickedTask?.start || new Date(),
+      end: clickedTask?.end || new Date(),
+    },
+  });
 
+  //-- タスクを更新
   const onClickUpdateButton = () => {
-    //-- 更新した課題を取得し、更新
     if (!editTask) return;
+    // getValues()で取得
+    const { start, end } = getValues();
+    // 更新するデータ
     const updatedTask: GanttTask = {
       ...editTask,
+      start: start,
+      end: end,
       progress: progress,
     };
-    // console.log("更新されたタスク:", updatedTask);
+    console.log("更新されたタスク:", updatedTask);
     setEditTask(updatedTask);
-    // タスク全体の配列を更新する
+
+    //-- タスク全体の配列を更新する
     const updatedGanttTasks = ganttTasks.map((task) => {
       if (task.id === updatedTask.id) {
         return updatedTask;
@@ -43,7 +62,8 @@ export const TaskPreview: FC<Props> = memo((props) => {
       }
     });
     setGanttTasks(updatedGanttTasks);
-    // localStorageに保存
+
+    //-- localStorageに保存
     localStorage.setItem(
       "ganttTasks",
       JSON.stringify(updatedGanttTasks.map(serializeTask))
@@ -66,26 +86,27 @@ export const TaskPreview: FC<Props> = memo((props) => {
       <ModalHeader>{clickedTask?.name}</ModalHeader>
       <ModalCloseButton />
       <ModalBody>
-        <Text>{clickedTask?.content}</Text>
-        <Button>状態の変更</Button>
-        <Box>
-          <InputStartDate date={clickedTask?.start} />
-          <InputEndDate date={clickedTask?.end} />
+        <form onSubmit={handleSubmit(onClickUpdateButton)}>
+          <Text>{clickedTask?.content}</Text>
+          <Box>
+            <DateInput control={control} name={"start"} label={"開始日"} />
+            <DateInput control={control} name={"end"} label={"終了日"} />
 
-          <Flex align={"center"} gap={2} mt={4}>
-            <Text>進捗:</Text>
-            <Input
-              w={"80px"}
-              value={progress}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleProgressChange(e.target.value)
-              }
-            />
-            <Text>%</Text>
-          </Flex>
+            <Flex align={"center"} gap={2} mt={4}>
+              <Text>進捗:</Text>
+              <Input
+                w={"80px"}
+                value={progress}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  handleProgressChange(e.target.value)
+                }
+              />
+              <Text>%</Text>
+            </Flex>
 
-          <Button onClick={onClickUpdateButton}>更新</Button>
-        </Box>
+            <Button type="submit">更新</Button>
+          </Box>
+        </form>
       </ModalBody>
     </ModalContent>
   );

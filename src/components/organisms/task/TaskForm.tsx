@@ -10,8 +10,7 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { TaskFormInput } from "../../../domain/ganttTask";
-import { InputStartDate } from "../../atoms/Calender/InputStartDate";
-import { InputEndDate } from "../../atoms/Calender/InputEndDate";
+import { DateInput } from "../../atoms/Calender/DateInput";
 
 type Props = {
   onSubmit: (data: TaskFormInput) => void;
@@ -24,8 +23,14 @@ export const TaskForm: FC<Props> = memo((props) => {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
-  } = useForm<TaskFormInput>();
+    control,
+  } = useForm<TaskFormInput>({
+    defaultValues: {
+      // 日付の初期値を設定
+      start: new Date(),
+      end: new Date(),
+    },
+  });
 
   return (
     <Box maxW={"500px"}>
@@ -47,8 +52,8 @@ export const TaskForm: FC<Props> = memo((props) => {
             <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
           </FormControl>
 
-          <InputStartDate setValue={setValue} />
-          <InputEndDate setValue={setValue} />
+          <DateInput control={control} name={"start"} label={"開始日"} />
+          <DateInput control={control} name={"end"} label={"終了日"} />
 
           {/* <Flex alignItems="center" gap={2}>
             <Text>目標時間：</Text>
