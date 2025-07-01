@@ -10,3 +10,8 @@ GanttArea（親）
 └─ GanttChart（子）
    └─ TaskPreview（孫）
 ーーー
+
+日付の型を管理する
+※アプリの中で JSON.stringify や new Date() を何度も書かなくていい
+保存：Dateをstringにする
+読み込み： Date → string に変換

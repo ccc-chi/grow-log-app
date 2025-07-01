@@ -13,7 +13,11 @@ import {
 
 import { GanttChart } from "../gantt/GanttChart";
 import { TaskForm } from "../task/TaskForm";
-import { GanttTask, TaskFormInput } from "../../../domain/ganttTask";
+import {
+  deserializeTask,
+  GanttTask,
+  TaskFormInput,
+} from "../../../domain/ganttTask";
 
 export const GanttArea: FC = memo(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -21,11 +25,7 @@ export const GanttArea: FC = memo(() => {
     // localStorageにデータがあれば設定する
     const stored = localStorage.getItem("ganttTasks");
     const perse = JSON.parse(stored || "[]");
-    return perse.map((task: any) => ({
-      ...task,
-      start: new Date(task.start),
-      end: new Date(task.end),
-    }));
+    return perse.map(deserializeTask);
   });
 
   const onSubmit = (data: TaskFormInput) => {
@@ -35,7 +35,7 @@ export const GanttArea: FC = memo(() => {
       name: data.title,
       id: uuidv4(),
       type: "task",
-      progress: 45,
+      progress: 0,
       isDisabled: true,
       styles: {
         progressColor: "#ffbb54",

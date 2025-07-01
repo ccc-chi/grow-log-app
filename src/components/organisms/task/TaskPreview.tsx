@@ -10,7 +10,7 @@ import {
   ModalHeader,
   Text,
 } from "@chakra-ui/react";
-import { GanttTask } from "../../../domain/ganttTask";
+import { GanttTask, serializeTask } from "../../../domain/ganttTask";
 import { InputStartDate } from "../../atoms/Calender/InputStartDate";
 import { InputEndDate } from "../../atoms/Calender/InputEndDate";
 
@@ -43,18 +43,24 @@ export const TaskPreview: FC<Props> = memo((props) => {
       }
     });
     setGanttTasks(updatedGanttTasks);
+    // localStorageに保存
+    localStorage.setItem(
+      "ganttTasks",
+      JSON.stringify(updatedGanttTasks.map(serializeTask))
+    );
   };
 
   // progressの数字を管理する
-  const progressNumber = (progress: any) => {
-    isNaN(progress);
-    if (!isNaN(progress)) {
-      setProgress(Number(progress));
+  const handleProgressChange = (value: string) => {
+    const num = Number(value);
+    if (!isNaN(num)) {
+      setProgress(Number(num));
     } else {
       setProgress(0);
+      return;
     }
   };
-  // console.log("clickedTask:", clickedTask);
+
   return (
     <ModalContent>
       <ModalHeader>{clickedTask?.name}</ModalHeader>
@@ -72,7 +78,7 @@ export const TaskPreview: FC<Props> = memo((props) => {
               w={"80px"}
               value={progress}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                progressNumber(e.target.value)
+                handleProgressChange(e.target.value)
               }
             />
             <Text>%</Text>
