@@ -8,6 +8,7 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalHeader,
+  Stack,
   Text,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
@@ -23,11 +24,12 @@ type Props = {
   clickedTask: GanttTask | null;
   ganttTasks: GanttTask[];
   setGanttTasks: React.Dispatch<React.SetStateAction<GanttTask[]>>;
+  onClose: () => void;
 };
 
 //-- ガントバーでタスクをクリック時に表示
 export const TaskPreview: FC<Props> = memo((props) => {
-  const { clickedTask, ganttTasks, setGanttTasks } = props;
+  const { clickedTask, ganttTasks, setGanttTasks, onClose } = props;
   const [editTask, setEditTask] = useState<GanttTask | null>(clickedTask);
   const [progress, setProgress] = useState<number>(clickedTask?.progress || 0);
   // RHF 初期値を設定
@@ -40,7 +42,10 @@ export const TaskPreview: FC<Props> = memo((props) => {
 
   //-- タスクを更新
   const onClickUpdateButton = () => {
-    if (!editTask) return;
+    if (!editTask) {
+      onClose();
+      return;
+    }
     // getValues()で取得
     const { start, end } = getValues();
     // 更新するデータ
@@ -68,12 +73,13 @@ export const TaskPreview: FC<Props> = memo((props) => {
       "ganttTasks",
       JSON.stringify(updatedGanttTasks.map(serializeTask))
     );
+    onClose();
   };
 
   // progressの数字を管理する
   const handleProgressChange = (value: string) => {
     const num = Number(value);
-    if (!isNaN(num)) {
+    if (!isNaN(num) && num >= 1 && num <= 100) {
       setProgress(Number(num));
     } else {
       setProgress(0);
@@ -86,13 +92,15 @@ export const TaskPreview: FC<Props> = memo((props) => {
       <ModalHeader>{clickedTask?.name}</ModalHeader>
       <ModalCloseButton />
       <ModalBody>
-        <form onSubmit={handleSubmit(onClickUpdateButton)}>
+        <Box mb={10}>
           <Text>{clickedTask?.content}</Text>
-          <Box>
+        </Box>
+        <form onSubmit={handleSubmit(onClickUpdateButton)}>
+          <Stack spacing={2}>
             <DateInput control={control} name={"start"} label={"開始日"} />
             <DateInput control={control} name={"end"} label={"終了日"} />
 
-            <Flex align={"center"} gap={2} mt={4}>
+            <Flex align={"center"} gap={2} my={2}>
               <Text>進捗:</Text>
               <Input
                 w={"80px"}
@@ -103,9 +111,10 @@ export const TaskPreview: FC<Props> = memo((props) => {
               />
               <Text>%</Text>
             </Flex>
-
-            <Button type="submit">更新</Button>
-          </Box>
+            <Box my={4} textAlign={"right"}>
+              <Button type="submit">更新</Button>
+            </Box>
+          </Stack>
         </form>
       </ModalBody>
     </ModalContent>

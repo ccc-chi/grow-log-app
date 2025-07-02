@@ -49,6 +49,7 @@ export const GanttArea: FC = memo(() => {
     };
     setGanttTasks((tasks) => [...tasks, task]);
     localStorage.setItem("ganttTasks", JSON.stringify([...ganttTasks, task]));
+    onClose();
   };
   return (
     <>

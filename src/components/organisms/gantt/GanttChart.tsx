@@ -54,6 +54,7 @@ export const GanttChart: FC<Props> = memo((props) => {
             clickedTask={clickedTask}
             ganttTasks={ganttTasks}
             setGanttTasks={setGanttTasks}
+            onClose={onClose}
           />
         )}
       </Modal>
