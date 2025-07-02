@@ -6,7 +6,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Gantt, Task } from "gantt-task-react";
+import { Gantt, Task, ViewMode } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
 import { TaskPreview } from "../task/TaskPreview";
 import { GanttTask } from "../../../domain/ganttTask";
@@ -17,12 +17,13 @@ type Props = {
 };
 
 export const GanttChart: FC<Props> = memo((props) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { ganttTasks, setGanttTasks } = props;
+  //-- styles
+  const NoTooltip: React.FC<TooltipContentProps> = () => null;
 
   //-- ガントバーがクリックされたときの処理
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { ganttTasks, setGanttTasks } = props;
   const [clickedTask, setClickedTask] = useState<GanttTask | null>(null);
-
   const ganttBarClick = (task: Task) => {
     setClickedTask(task as GanttTask);
     onOpen();
@@ -32,7 +33,13 @@ export const GanttChart: FC<Props> = memo((props) => {
     <>
       <Box my={4}>
         {ganttTasks.length > 0 ? (
-          <Gantt tasks={ganttTasks as Task[]} onClick={ganttBarClick} />
+          <Gantt
+            tasks={ganttTasks as Task[]}
+            onClick={ganttBarClick}
+            viewMode={ViewMode.Day}
+            locale={"ja"}
+            TooltipContent={NoTooltip}
+          />
         ) : (
           <div>
             <Text>タスクを追加してください。</Text>
