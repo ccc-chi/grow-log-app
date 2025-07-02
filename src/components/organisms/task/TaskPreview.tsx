@@ -10,6 +10,7 @@ import {
   ModalHeader,
   Stack,
   Text,
+  Textarea,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 
@@ -33,12 +34,16 @@ export const TaskPreview: FC<Props> = memo((props) => {
   const [editTask, setEditTask] = useState<GanttTask | null>(clickedTask);
   const [progress, setProgress] = useState<number>(clickedTask?.progress || 0);
   // RHF 初期値を設定
-  const { handleSubmit, control, getValues } = useForm<TaskFormInput>({
-    defaultValues: {
-      start: clickedTask?.start || new Date(),
-      end: clickedTask?.end || new Date(),
-    },
-  });
+  const { handleSubmit, control, getValues, register } = useForm<TaskFormInput>(
+    {
+      defaultValues: {
+        title: clickedTask?.name || "",
+        content: clickedTask?.content || "",
+        start: clickedTask?.start || new Date(),
+        end: clickedTask?.end || new Date(),
+      },
+    }
+  );
 
   //-- タスクを更新
   const onClickUpdateButton = () => {
@@ -47,10 +52,12 @@ export const TaskPreview: FC<Props> = memo((props) => {
       return;
     }
     // getValues()で取得
-    const { start, end } = getValues();
+    const { start, end, title, content } = getValues();
     // 更新するデータ
     const updatedTask: GanttTask = {
       ...editTask,
+      name: title,
+      content: content,
       start: start,
       end: end,
       progress: progress,
@@ -87,15 +94,36 @@ export const TaskPreview: FC<Props> = memo((props) => {
     }
   };
 
+  //-- タイトルとコンテンツを編集できるように
+  const [isEditing, setIsEditing] = useState(false);
+
   return (
-    <ModalContent>
-      <ModalHeader>{clickedTask?.name}</ModalHeader>
-      <ModalCloseButton />
-      <ModalBody>
-        <Box mb={10}>
-          <Text>{clickedTask?.content}</Text>
-        </Box>
-        <form onSubmit={handleSubmit(onClickUpdateButton)}>
+    <ModalContent p={5}>
+      <form onSubmit={handleSubmit(onClickUpdateButton)}>
+        <ModalHeader minHeight={"90px"}>
+          {isEditing ? <Input {...register("title")} /> : clickedTask?.name}
+        </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Box minHeight={"150px"}>
+            {isEditing ? (
+              <Textarea {...register("content")} />
+            ) : (
+              clickedTask?.content
+            )}
+          </Box>
+          <Box textAlign={"right"} my={2}>
+            <Text
+              as={"span"}
+              cursor={"pointer"}
+              fontSize={"sm"}
+              textDecor={"underline"}
+              onClick={() => setIsEditing(!isEditing)}
+            >
+              {isEditing ? "キャンセル" : "編集する"}
+            </Text>
+          </Box>
+
           <Stack spacing={2}>
             <DateInput control={control} name={"start"} label={"開始日"} />
             <DateInput control={control} name={"end"} label={"終了日"} />
@@ -115,8 +143,8 @@ export const TaskPreview: FC<Props> = memo((props) => {
               <Button type="submit">更新</Button>
             </Box>
           </Stack>
-        </form>
-      </ModalBody>
+        </ModalBody>
+      </form>
     </ModalContent>
   );
 });
