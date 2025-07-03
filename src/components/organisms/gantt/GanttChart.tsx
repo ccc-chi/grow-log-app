@@ -18,7 +18,7 @@ type Props = {
 
 export const GanttChart: FC<Props> = memo((props) => {
   //-- styles
-  const NoTooltip: React.FC<TooltipContentProps> = () => null;
+  const NoTooltip = () => null;
 
   //-- ガントバーがクリックされたときの処理
   const { isOpen, onOpen, onClose } = useDisclosure();

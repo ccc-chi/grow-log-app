@@ -1,12 +1,13 @@
 import { FC, memo } from "react";
 import { Input, FormControl, FormLabel, Flex, Text } from "@chakra-ui/react";
-import { Controller } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { TaskFormInput } from "../../../domain/ganttTask";
 
 type Props = {
-  control: Control<FormValues>;
-  name: string;
+  control: Control<TaskFormInput>;
+  name: keyof TaskFormInput;
   label: string;
 };
 
@@ -22,7 +23,14 @@ export const DateInput: FC<Props> = memo((props) => {
           name={name}
           render={({ field: { onChange, value } }) => (
             <DatePicker
-              selected={value}
+              // valueが文字にならないようにガード（localStorageは文字列の扱い）
+              selected={
+                typeof value === "string"
+                  ? value
+                    ? new Date(value)
+                    : null
+                  : value
+              }
               onChange={onChange}
               customInput={<Input />}
               dateFormat="yyyy/MM/dd"
