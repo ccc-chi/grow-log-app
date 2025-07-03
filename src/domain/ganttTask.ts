@@ -2,8 +2,8 @@ export type TaskFormInput = {
   title: string;
   content: string;
   targetTime: string;
-  start: Date | null;
-  end: Date | null;
+  start: Date;
+  end: Date;
 };
 export type GanttTask = {
   start: Date;
