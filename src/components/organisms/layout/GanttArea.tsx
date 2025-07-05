@@ -9,6 +9,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalCloseButton,
+  Flex,
 } from "@chakra-ui/react";
 
 import { GanttChart } from "../gantt/GanttChart";
@@ -54,7 +55,9 @@ export const GanttArea: FC = memo(() => {
   return (
     <>
       <GanttChart ganttTasks={ganttTasks} setGanttTasks={setGanttTasks} />
-      <Button onClick={onOpen}>タスクを登録</Button>
+      <Flex gap={5}>
+        <Button onClick={onOpen}>タスクを登録</Button>
+      </Flex>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>

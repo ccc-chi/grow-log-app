@@ -1,7 +1,15 @@
-import { FC, memo } from 'react';
+import { Box } from "@chakra-ui/react";
+import { FC, memo } from "react";
+import { AllLogList } from "../log/allLogList";
+import { RecordLog } from "../log/RecordLog";
 
 export const LogListArea: FC = memo(() => {
   return (
-    <p>草エリア</p>
+    <>
+      <Box my={10}>
+        <RecordLog />
+        <AllLogList />
+      </Box>
+    </>
   );
 });
