@@ -12,7 +12,8 @@ import { FC, memo, useCallback, useEffect, useState } from "react";
 import { serializeTask, TaskWithLogs } from "../../../domain/TaskWithLogs";
 import { useForm } from "react-hook-form";
 
-type RecordLog = {
+type TimerLog = {
+  // ストップウォッチ用
   start: Date;
   end: Date;
   diffMs: number;
@@ -26,21 +27,20 @@ type Props = {
 export const RecordLog: FC<Props> = memo((props) => {
   const { tasks, setTasks } = props;
   const [isRecording, setIsRecording] = useState(false);
-  // const [progress, setProgress] = useState(0);
   //-- 記録時間
   const [currentStartTime, setCurrentStartTime] = useState<Date>();
-  const [recordLogs, setRecordLogs] = useState<RecordLog[]>([]);
+  const [recordLogs, setRecordLogs] = useState<TimerLog[]>([]);
   const onClickRecordTimer = () => {
     if (!isRecording) {
       // スタート
       const start = new Date();
       setCurrentStartTime(start);
-      setIsRecording(!isRecording);
+      setIsRecording(true);
       console.log("開始", start);
     } else {
       // ストップ
       const end = new Date();
-      setIsRecording(!isRecording);
+      setIsRecording(false);
       console.log("終了", end);
 
       // 差分を配列に保存しておく
@@ -111,7 +111,6 @@ export const RecordLog: FC<Props> = memo((props) => {
     }
   }, [selectedTaskId, tasks, setValue]);
   const todayStr = new Date().toISOString().split("T")[0];
-  console.log(todayStr);
   const addRecordTask = () => {
     const { selectedTaskId, progress, memoText } = getValues();
     const updatedTaskWithLogs = tasks.map((task) => {
@@ -167,7 +166,7 @@ export const RecordLog: FC<Props> = memo((props) => {
               width={"100%"}
               onClick={() => onClickRecordTimer()}
             >
-              {isRecording ? "記録を停止" : "記録を開始"}
+              {isRecording ? "停止" : "開始"}
             </Button>
             <Box mt={5}>
               <Stack
@@ -200,6 +199,8 @@ export const RecordLog: FC<Props> = memo((props) => {
                   <Flex alignItems={"flex-end"}>
                     <Input
                       type="number"
+                      min={0}
+                      max={100}
                       {...register("progress")}
                       w={"100px"}
                     />

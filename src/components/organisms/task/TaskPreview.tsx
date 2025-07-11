@@ -99,14 +99,25 @@ export const TaskPreview: FC<Props> = memo((props) => {
   const [isEditing, setIsEditing] = useState(false);
 
   return (
-    <ModalContent p={5}>
+    <ModalContent py={10} px={9} maxWidth="800px" width="90%">
       <form onSubmit={handleSubmit(onClickUpdateButton)}>
-        <ModalHeader minHeight={"90px"}>
+        <ModalHeader
+          minHeight={"90px"}
+          backgroundColor={"gray.100"}
+          borderRadius={"10"}
+          p={4}
+          mb={5}
+        >
           {isEditing ? <Input {...register("title")} /> : clickedTask?.name}
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
-          <Box minHeight={"150px"}>
+        <ModalBody p={0}>
+          <Box
+            minHeight={"150px"}
+            backgroundColor={"gray.100"}
+            borderRadius={"10"}
+            p={4}
+          >
             {isEditing ? (
               <Textarea {...register("content")} />
             ) : (
@@ -125,7 +136,7 @@ export const TaskPreview: FC<Props> = memo((props) => {
             </Text>
           </Box>
 
-          <Stack spacing={2}>
+          <Stack spacing={2} mt={10}>
             <DateInput control={control} name={"start"} label={"開始日"} />
             <DateInput control={control} name={"end"} label={"終了日"} />
 
