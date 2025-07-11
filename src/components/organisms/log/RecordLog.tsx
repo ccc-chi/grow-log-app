@@ -57,7 +57,7 @@ export const RecordLog: FC<Props> = memo((props) => {
   };
   //-- 合計時間を出す
   const [totalTimeStr, setTotalTimeStr] = useState("0時間00分");
-  const totalTime = useCallback((logs: RecordLog[]) => {
+  const totalTime = useCallback((logs: TimerLog[]) => {
     const totalMs = logs.reduce((sum, log) => sum + log.diffMs, 0);
     const totalMinutes = Math.floor(totalMs / 1000 / 60);
     const hours = Math.floor(totalMinutes / 60);
