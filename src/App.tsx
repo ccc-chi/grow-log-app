@@ -9,7 +9,7 @@ function App() {
     <>
       <h1>タスク管理 × 記録 Webアプリ</h1>
       <GanttArea tasks={tasks} setTasks={setTasks} />
-      <LogListArea />
+      <LogListArea tasks={tasks} setTasks={setTasks} />
     </>
   );
 }
