@@ -9,7 +9,7 @@ import {
   Input,
 } from "@chakra-ui/react";
 import { FC, memo, useCallback, useEffect, useState } from "react";
-import { TaskWithLogs } from "../../../domain/TaskWithLogs";
+import { serializeTask, TaskWithLogs } from "../../../domain/TaskWithLogs";
 import { useForm } from "react-hook-form";
 
 type RecordLog = {
@@ -99,7 +99,8 @@ export const RecordLog: FC<Props> = memo((props) => {
     selectedTaskId: string;
     progress: number;
   };
-  const { handleSubmit, register, getValues } = useForm<FormData>();
+  const { handleSubmit, register, getValues, watch } = useForm<FormData>();
+  const selectedTaskId = watch("selectedTaskId");
   const addRecordTask = () => {
     const { selectedTaskId, progress } = getValues();
     const updatedTaskWithLogs = tasks.map((task) => {
@@ -114,6 +115,11 @@ export const RecordLog: FC<Props> = memo((props) => {
     });
     setTasks(updatedTaskWithLogs);
     setIsRecording(false);
+    //-- localStorageに保存
+    localStorage.setItem(
+      "tasks",
+      JSON.stringify(updatedTaskWithLogs.map(serializeTask))
+    );
   };
 
   return (
@@ -131,17 +137,7 @@ export const RecordLog: FC<Props> = memo((props) => {
             <Text as="h2" fontWeight={"bold"} fontSize="l" my={2}>
               記録を開始する
             </Text>
-            <Select
-              placeholder="タスクを選択"
-              backgroundColor={"white"}
-              {...register("selectedTaskId")}
-            >
-              {tasks.map((task) => (
-                <option key={task.id} value={task.id}>
-                  {task.name}
-                </option>
-              ))}
-            </Select>
+
             <Text fontSize={"4xl"} fontWeight={"bold"} textAlign={"center"}>
               {stopwatchStr}
             </Text>
@@ -164,8 +160,19 @@ export const RecordLog: FC<Props> = memo((props) => {
               >
                 <Text fontWeight={"bold"}>タスクに記録する</Text>
                 <Text fontSize={"xs"} mb={2}>
-                  登録内容と進捗を入力してください。
+                  タスクを選択し、登録内容と進捗を入力してください。
                 </Text>
+                <Select
+                  placeholder="タスクを選択"
+                  backgroundColor={"white"}
+                  {...register("selectedTaskId")}
+                >
+                  {tasks.map((task) => (
+                    <option key={task.id} value={task.id}>
+                      {task.name}
+                    </option>
+                  ))}
+                </Select>
                 <Text>記録時間：{totalTimeStr}</Text>
                 <Text>やったこと</Text>
                 <Textarea />
@@ -180,7 +187,12 @@ export const RecordLog: FC<Props> = memo((props) => {
                     <Text>%</Text>
                   </Flex>
                 </Box>
-                <Button colorScheme="teal" width={"100%"} type="submit">
+                <Button
+                  colorScheme="teal"
+                  width={"100%"}
+                  type="submit"
+                  isDisabled={!selectedTaskId}
+                >
                   登録
                 </Button>
               </Stack>
