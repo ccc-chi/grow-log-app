@@ -12,17 +12,17 @@ import { TaskPreview } from "../task/TaskPreview";
 import { TaskWithLogs } from "../../../domain/TaskWithLogs";
 
 type Props = {
-  TaskWithLogs: TaskWithLogs[];
-  setTaskWithLogs: React.Dispatch<React.SetStateAction<TaskWithLogs[]>>;
+  tasks: TaskWithLogs[];
+  setTasks: React.Dispatch<React.SetStateAction<TaskWithLogs[]>>;
 };
 
 export const GanttChart: FC<Props> = memo((props) => {
+  const { tasks, setTasks } = props;
+
   //-- styles
   const NoTooltip = () => null;
-
   //-- ガントバーがクリックされたときの処理
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { TaskWithLogs, setTaskWithLogs } = props;
   const [clickedTask, setClickedTask] = useState<TaskWithLogs | null>(null);
   const ganttBarClick = (task: Task) => {
     setClickedTask(task as TaskWithLogs);
@@ -32,9 +32,9 @@ export const GanttChart: FC<Props> = memo((props) => {
   return (
     <>
       <Box my={4}>
-        {TaskWithLogs.length > 0 ? (
+        {tasks.length > 0 ? (
           <Gantt
-            tasks={TaskWithLogs as Task[]}
+            tasks={tasks as Task[]}
             onClick={ganttBarClick}
             viewMode={ViewMode.Day}
             locale={"ja"}
@@ -52,8 +52,8 @@ export const GanttChart: FC<Props> = memo((props) => {
         {clickedTask && (
           <TaskPreview
             clickedTask={clickedTask}
-            TaskWithLogs={TaskWithLogs}
-            setTaskWithLogs={setTaskWithLogs}
+            tasks={tasks}
+            setTasks={setTasks}
             onClose={onClose}
           />
         )}

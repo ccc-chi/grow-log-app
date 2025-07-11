@@ -1,4 +1,4 @@
-import { FC, memo, useState } from "react";
+import { FC, memo, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   Button,
@@ -20,14 +20,24 @@ import {
   TaskFormInput,
 } from "../../../domain/TaskWithLogs";
 
-export const GanttArea: FC = memo(() => {
+type Props = {
+  tasks: TaskWithLogs[];
+  setTasks: React.Dispatch<React.SetStateAction<TaskWithLogs[]>>;
+};
+
+export const GanttArea: FC<Props> = memo((props) => {
+  const { tasks, setTasks } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [TaskWithLogs, setTaskWithLogs] = useState<TaskWithLogs[]>(() => {
-    // localStorageにデータがあれば設定する
-    const stored = localStorage.getItem("TaskWithLogs");
-    const perse = JSON.parse(stored || "[]");
-    return perse.map(deserializeTask);
-  });
+  useEffect(() => {
+    if (tasks.length === 0) {
+      // localStorageにデータがあれば設定する
+      const stored = localStorage.getItem("tasks");
+      const parse = JSON.parse(stored || "[]");
+      const deserialized = parse.map(deserializeTask);
+      setTasks(deserialized);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tasks.length]);
 
   const onSubmit = (data: TaskFormInput) => {
     const task: TaskWithLogs = {
@@ -48,19 +58,13 @@ export const GanttArea: FC = memo(() => {
       // totalDuration: 0,
       // taskRecords: [],
     };
-    setTaskWithLogs((tasks) => [...tasks, task]);
-    localStorage.setItem(
-      "TaskWithLogs",
-      JSON.stringify([...TaskWithLogs, task])
-    );
+    setTasks((tasks) => [...tasks, task]);
+    localStorage.setItem("tasks", JSON.stringify([...tasks, task]));
     onClose();
   };
   return (
     <>
-      <GanttChart
-        TaskWithLogs={TaskWithLogs}
-        setTaskWithLogs={setTaskWithLogs}
-      />
+      <GanttChart tasks={tasks} setTasks={setTasks} />
       <Flex gap={5}>
         <Button onClick={onOpen}>タスクを登録</Button>
       </Flex>

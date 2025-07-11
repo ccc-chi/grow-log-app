@@ -137,7 +137,7 @@ export const RecordLog: FC = memo(() => {
                 <Box gap={0} mb={2}>
                   <Text>進捗</Text>
                   <Flex alignItems={"flex-end"}>
-                    <Input value="" w={"50px"} />
+                    {/* <Input value="" w={"50px"} /> */}
                     <Text>%</Text>
                   </Flex>
                 </Box>

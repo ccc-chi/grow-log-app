@@ -23,14 +23,15 @@ import {
 
 type Props = {
   clickedTask: TaskWithLogs | null;
-  TaskWithLogs: TaskWithLogs[];
-  setTaskWithLogs: React.Dispatch<React.SetStateAction<TaskWithLogs[]>>;
+  tasks: TaskWithLogs[];
+  setTasks: React.Dispatch<React.SetStateAction<TaskWithLogs[]>>;
   onClose: () => void;
 };
 
 //-- ガントバーでタスクをクリック時に表示
 export const TaskPreview: FC<Props> = memo((props) => {
-  const { clickedTask, TaskWithLogs, setTaskWithLogs, onClose } = props;
+  const { clickedTask, tasks, setTasks, onClose } = props;
+
   const [editTask, setEditTask] = useState<TaskWithLogs | null>(clickedTask);
   const [progress, setProgress] = useState<number>(clickedTask?.progress || 0);
   // RHF 初期値を設定
@@ -66,18 +67,18 @@ export const TaskPreview: FC<Props> = memo((props) => {
     setEditTask(updatedTask);
 
     //-- タスク全体の配列を更新する
-    const updatedTaskWithLogs = TaskWithLogs.map((task) => {
+    const updatedTaskWithLogs = tasks.map((task) => {
       if (task.id === updatedTask.id) {
         return updatedTask;
       } else {
         return task;
       }
     });
-    setTaskWithLogs(updatedTaskWithLogs);
+    setTasks(updatedTaskWithLogs);
 
     //-- localStorageに保存
     localStorage.setItem(
-      "TaskWithLogs",
+      "tasks",
       JSON.stringify(updatedTaskWithLogs.map(serializeTask))
     );
     onClose();
