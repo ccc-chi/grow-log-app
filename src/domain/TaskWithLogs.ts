@@ -5,7 +5,7 @@ export type TaskFormInput = {
   start: Date;
   end: Date;
 };
-export type GanttTask = {
+export type TaskWithLogs = {
   start: Date;
   end: Date;
   name: string;
@@ -21,20 +21,22 @@ export type GanttTask = {
 };
 
 //-- 保存・通信用に「文字列化」するタスク
-export type GanttTaskSerialized = Omit<GanttTask, "start" | "end"> & {
+export type TaskWithLogsSerialized = Omit<TaskWithLogs, "start" | "end"> & {
   start: string;
   end: string;
 };
 
 // localstorageに保存するための型
-export const serializeTask = (task: GanttTask): GanttTaskSerialized => ({
+export const serializeTask = (task: TaskWithLogs): TaskWithLogsSerialized => ({
   ...task,
   start: task.start.toISOString(),
   end: task.end.toISOString(),
 });
 
 // localstorageから読み込むための型
-export const deserializeTask = (task: GanttTaskSerialized): GanttTask => ({
+export const deserializeTask = (
+  task: TaskWithLogsSerialized
+): TaskWithLogs => ({
   ...task,
   start: new Date(task.start),
   end: new Date(task.end),

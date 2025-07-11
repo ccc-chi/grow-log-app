@@ -16,22 +16,22 @@ import { useForm } from "react-hook-form";
 
 import { DateInput } from "../../atoms/Calender/DateInput";
 import {
-  GanttTask,
+  TaskWithLogs,
   serializeTask,
   TaskFormInput,
-} from "../../../domain/ganttTask";
+} from "../../../domain/TaskWithLogs";
 
 type Props = {
-  clickedTask: GanttTask | null;
-  ganttTasks: GanttTask[];
-  setGanttTasks: React.Dispatch<React.SetStateAction<GanttTask[]>>;
+  clickedTask: TaskWithLogs | null;
+  TaskWithLogs: TaskWithLogs[];
+  setTaskWithLogs: React.Dispatch<React.SetStateAction<TaskWithLogs[]>>;
   onClose: () => void;
 };
 
 //-- ガントバーでタスクをクリック時に表示
 export const TaskPreview: FC<Props> = memo((props) => {
-  const { clickedTask, ganttTasks, setGanttTasks, onClose } = props;
-  const [editTask, setEditTask] = useState<GanttTask | null>(clickedTask);
+  const { clickedTask, TaskWithLogs, setTaskWithLogs, onClose } = props;
+  const [editTask, setEditTask] = useState<TaskWithLogs | null>(clickedTask);
   const [progress, setProgress] = useState<number>(clickedTask?.progress || 0);
   // RHF 初期値を設定
   const { handleSubmit, control, getValues, register } = useForm<TaskFormInput>(
@@ -54,7 +54,7 @@ export const TaskPreview: FC<Props> = memo((props) => {
     // getValues()で取得
     const { start, end, title, content } = getValues();
     // 更新するデータ
-    const updatedTask: GanttTask = {
+    const updatedTask: TaskWithLogs = {
       ...editTask,
       name: title,
       content: content,
@@ -66,19 +66,19 @@ export const TaskPreview: FC<Props> = memo((props) => {
     setEditTask(updatedTask);
 
     //-- タスク全体の配列を更新する
-    const updatedGanttTasks = ganttTasks.map((task) => {
+    const updatedTaskWithLogs = TaskWithLogs.map((task) => {
       if (task.id === updatedTask.id) {
         return updatedTask;
       } else {
         return task;
       }
     });
-    setGanttTasks(updatedGanttTasks);
+    setTaskWithLogs(updatedTaskWithLogs);
 
     //-- localStorageに保存
     localStorage.setItem(
-      "ganttTasks",
-      JSON.stringify(updatedGanttTasks.map(serializeTask))
+      "TaskWithLogs",
+      JSON.stringify(updatedTaskWithLogs.map(serializeTask))
     );
     onClose();
   };

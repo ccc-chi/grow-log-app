@@ -3,7 +3,7 @@ import { Input, FormControl, FormLabel, Flex, Text } from "@chakra-ui/react";
 import { Control, Controller } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { TaskFormInput } from "../../../domain/ganttTask";
+import { TaskFormInput } from "../../../domain/TaskWithLogs";
 
 type Props = {
   control: Control<TaskFormInput>;

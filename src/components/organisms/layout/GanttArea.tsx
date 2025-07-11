@@ -16,21 +16,21 @@ import { GanttChart } from "../gantt/GanttChart";
 import { TaskForm } from "../task/TaskForm";
 import {
   deserializeTask,
-  GanttTask,
+  TaskWithLogs,
   TaskFormInput,
-} from "../../../domain/ganttTask";
+} from "../../../domain/TaskWithLogs";
 
 export const GanttArea: FC = memo(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [ganttTasks, setGanttTasks] = useState<GanttTask[]>(() => {
+  const [TaskWithLogs, setTaskWithLogs] = useState<TaskWithLogs[]>(() => {
     // localStorageにデータがあれば設定する
-    const stored = localStorage.getItem("ganttTasks");
+    const stored = localStorage.getItem("TaskWithLogs");
     const perse = JSON.parse(stored || "[]");
     return perse.map(deserializeTask);
   });
 
   const onSubmit = (data: TaskFormInput) => {
-    const task: GanttTask = {
+    const task: TaskWithLogs = {
       start: data.start || new Date(),
       end: data.end || new Date(),
       name: data.title,
@@ -48,13 +48,19 @@ export const GanttArea: FC = memo(() => {
       // totalDuration: 0,
       // taskRecords: [],
     };
-    setGanttTasks((tasks) => [...tasks, task]);
-    localStorage.setItem("ganttTasks", JSON.stringify([...ganttTasks, task]));
+    setTaskWithLogs((tasks) => [...tasks, task]);
+    localStorage.setItem(
+      "TaskWithLogs",
+      JSON.stringify([...TaskWithLogs, task])
+    );
     onClose();
   };
   return (
     <>
-      <GanttChart ganttTasks={ganttTasks} setGanttTasks={setGanttTasks} />
+      <GanttChart
+        TaskWithLogs={TaskWithLogs}
+        setTaskWithLogs={setTaskWithLogs}
+      />
       <Flex gap={5}>
         <Button onClick={onOpen}>タスクを登録</Button>
       </Flex>

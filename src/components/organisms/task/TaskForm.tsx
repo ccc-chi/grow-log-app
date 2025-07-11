@@ -9,7 +9,7 @@ import {
   Stack,
   Textarea,
 } from "@chakra-ui/react";
-import { TaskFormInput } from "../../../domain/ganttTask";
+import { TaskFormInput } from "../../../domain/TaskWithLogs";
 import { DateInput } from "../../atoms/Calender/DateInput";
 
 type Props = {

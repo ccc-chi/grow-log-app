@@ -111,6 +111,8 @@ export const RecordLog: FC = memo(() => {
             </Text>
             <Button
               colorScheme="teal"
+              bg={isRecording ? "teal.900" : "teal.500"}
+              color={"white"}
               width={"100%"}
               onClick={() => onClickRecordTimer()}
             >

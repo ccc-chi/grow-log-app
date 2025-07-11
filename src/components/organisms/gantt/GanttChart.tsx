@@ -9,11 +9,11 @@ import {
 import { Gantt, Task, ViewMode } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
 import { TaskPreview } from "../task/TaskPreview";
-import { GanttTask } from "../../../domain/ganttTask";
+import { TaskWithLogs } from "../../../domain/TaskWithLogs";
 
 type Props = {
-  ganttTasks: GanttTask[];
-  setGanttTasks: React.Dispatch<React.SetStateAction<GanttTask[]>>;
+  TaskWithLogs: TaskWithLogs[];
+  setTaskWithLogs: React.Dispatch<React.SetStateAction<TaskWithLogs[]>>;
 };
 
 export const GanttChart: FC<Props> = memo((props) => {
@@ -22,19 +22,19 @@ export const GanttChart: FC<Props> = memo((props) => {
 
   //-- ガントバーがクリックされたときの処理
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { ganttTasks, setGanttTasks } = props;
-  const [clickedTask, setClickedTask] = useState<GanttTask | null>(null);
+  const { TaskWithLogs, setTaskWithLogs } = props;
+  const [clickedTask, setClickedTask] = useState<TaskWithLogs | null>(null);
   const ganttBarClick = (task: Task) => {
-    setClickedTask(task as GanttTask);
+    setClickedTask(task as TaskWithLogs);
     onOpen();
   };
 
   return (
     <>
       <Box my={4}>
-        {ganttTasks.length > 0 ? (
+        {TaskWithLogs.length > 0 ? (
           <Gantt
-            tasks={ganttTasks as Task[]}
+            tasks={TaskWithLogs as Task[]}
             onClick={ganttBarClick}
             viewMode={ViewMode.Day}
             locale={"ja"}
@@ -52,8 +52,8 @@ export const GanttChart: FC<Props> = memo((props) => {
         {clickedTask && (
           <TaskPreview
             clickedTask={clickedTask}
-            ganttTasks={ganttTasks}
-            setGanttTasks={setGanttTasks}
+            TaskWithLogs={TaskWithLogs}
+            setTaskWithLogs={setTaskWithLogs}
             onClose={onClose}
           />
         )}
