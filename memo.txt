@@ -1,0 +1,83 @@
+アプリの目的：
+ガントチャートを使って、タスクを管理する。
+タスクに作業記録をつけて、進捗を管理する。
+進捗と作業記録を見て、AIがアドバイスくれる。
+gitHubの草エリアを作って、日々の記録を見える化する。
+
+
+表記：
+ガントチャートに表示するものは「タスク」と呼ぶ = GanttChart
+作業の記録は「記録」と呼ぶ = AllLogList
+
+全体の構成
+ーーー
+App
+├─ GanttArea：タスクを表示
+│   └─ GanttChart：タスクを登録
+│      └─ TaskPreview：タスクを編集
+├─ LogListArea：記録を表示
+│   └─ RecordLog：記録を登録
+│   └─ AllLogList：記録の一覧
+├─ KusaArea：記録を草にして表示
+
+
+全体の配列は「TaskWithLogs」
+中身はガントチャートの表示するタスクと、
+タスクに紐付けた記録（１つのタスクに対して複数の記録）
+進捗は「TaskPreview」でも「RecordLog」でも更新できる。
+「AllLogList」でタスクに関わらず記録の一覧を表示する
+
+
+「TaskWithLogs」はAppで設定し、propsでTaskPreviewまで渡す
+ーーー
+App
+├─ GanttArea：タスクを表示
+│   └─ GanttChart：タスクを登録
+│      └─ TaskPreview：タスクを編集
+ーーー
+
+＝＝＝＝＝＝＝＝＝＝＝＝
+　型：TaskWithLogs
+＝＝＝＝＝＝＝＝＝＝＝＝
+  start: タスクの開始日
+  end: タスクの終了日
+  name: タスクの名前
+  id: タスクのid
+  type: "task"（固定）
+  progress: 進捗%
+  isDisabled: true（固定）
+  styles: {
+    progressColor?: タスクの色（固定）;
+    progressSelectedColor?: タスクの色（固定）;
+  };
+  content: タスクの内容;
+  actualHours:かかった時間（記録のdiffMsの合計）
+  targetHours:目標時間
+  recordList: {
+    id: 記録のid;
+    start: 開始日時;
+    end: 終了日時;
+    diffMs: 記録時間;
+    description: 作業内容;
+  }[];
+ーーー
+
+▼一覧の時はfaltする
+flatLogs = {
+   id: 記録のid, 
+   start: 開始日時;
+   end: 終了日時;
+   diffMs: 記録時間;
+   description: 作業内容, 
+   taskId: "task1" // 追加
+}[]
+
+
+
+ーーーー
+まとめる
+ーーーー
+日付の型を管理する
+※アプリの中で JSON.stringify や new Date() を何度も書かなくていい
+保存：Dateをstringにする
+読み込み： Date → string に変換
