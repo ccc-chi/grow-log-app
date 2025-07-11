@@ -15,7 +15,7 @@ export const LogListArea: FC<Props> = memo((props) => {
     <>
       <Box my={10}>
         <RecordLog tasks={tasks} setTasks={setTasks} />
-        <AllLogList />
+        <AllLogList tasks={tasks} />
       </Box>
     </>
   );

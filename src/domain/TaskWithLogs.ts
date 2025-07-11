@@ -18,6 +18,12 @@ export type TaskWithLogs = {
     progressSelectedColor?: string;
   };
   content?: string;
+  logs?: {
+    id: string;
+    date: string;
+    totalTime: string;
+    memo: string;
+  }[];
 };
 
 //-- 保存・通信用に「文字列化」するタスク

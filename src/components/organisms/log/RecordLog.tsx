@@ -98,21 +98,40 @@ export const RecordLog: FC<Props> = memo((props) => {
   type FormData = {
     selectedTaskId: string;
     progress: number;
+    memoText: string;
   };
-  const { handleSubmit, register, getValues, watch } = useForm<FormData>();
+  const { handleSubmit, register, getValues, setValue, watch } =
+    useForm<FormData>();
   const selectedTaskId = watch("selectedTaskId");
+  useEffect(() => {
+    // progressを自動でセット
+    const selectedTask = tasks.find((task) => task.id === selectedTaskId);
+    if (selectedTask) {
+      setValue("progress", selectedTask.progress);
+    }
+  }, [selectedTaskId, tasks, setValue]);
+  const todayStr = new Date().toISOString().split("T")[0];
+  console.log(todayStr);
   const addRecordTask = () => {
-    const { selectedTaskId, progress } = getValues();
+    const { selectedTaskId, progress, memoText } = getValues();
     const updatedTaskWithLogs = tasks.map((task) => {
       if (task.id === selectedTaskId) {
+        const newLog = {
+          id: `${Date.now()}-${Math.random()}`,
+          date: todayStr,
+          totalTime: totalTimeStr,
+          memo: memoText,
+        };
         return {
           ...task,
           progress: progress,
+          logs: [...(task.logs || []), newLog],
         };
       } else {
         return task;
       }
     });
+    console.log("updatedTaskWithLogs", updatedTaskWithLogs);
     setTasks(updatedTaskWithLogs);
     setIsRecording(false);
     //-- localStorageに保存
@@ -175,9 +194,9 @@ export const RecordLog: FC<Props> = memo((props) => {
                 </Select>
                 <Text>記録時間：{totalTimeStr}</Text>
                 <Text>やったこと</Text>
-                <Textarea />
+                <Textarea {...register("memoText")} />
                 <Box gap={0} mb={2}>
-                  <Text>進捗</Text>
+                  <Text>タスク全体の進捗</Text>
                   <Flex alignItems={"flex-end"}>
                     <Input
                       type="number"
