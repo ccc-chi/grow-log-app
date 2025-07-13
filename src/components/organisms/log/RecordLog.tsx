@@ -7,6 +7,12 @@ import {
   Flex,
   Textarea,
   Input,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  useToast,
 } from "@chakra-ui/react";
 import { FC, memo, useCallback, useEffect, useState } from "react";
 import { serializeTask, TaskWithLogs } from "../../../domain/TaskWithLogs";
@@ -100,7 +106,7 @@ export const RecordLog: FC<Props> = memo((props) => {
     progress: number;
     memoText: string;
   };
-  const { handleSubmit, register, getValues, setValue, watch } =
+  const { handleSubmit, register, getValues, setValue, watch, reset } =
     useForm<FormData>();
   const selectedTaskId = watch("selectedTaskId");
   useEffect(() => {
@@ -111,6 +117,7 @@ export const RecordLog: FC<Props> = memo((props) => {
     }
   }, [selectedTaskId, tasks, setValue]);
   const todayStr = new Date().toISOString().split("T")[0];
+  const toast = useToast(); // 登録完了のトースト
   const addRecordTask = () => {
     const { selectedTaskId, progress, memoText } = getValues();
     const updatedTaskWithLogs = tasks.map((task) => {
@@ -138,6 +145,15 @@ export const RecordLog: FC<Props> = memo((props) => {
       "tasks",
       JSON.stringify(updatedTaskWithLogs.map(serializeTask))
     );
+    //-- toastを表示
+    toast({
+      title: "登録完了",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+
+    reset();
   };
 
   return (
@@ -168,54 +184,70 @@ export const RecordLog: FC<Props> = memo((props) => {
             >
               {isRecording ? "停止" : "開始"}
             </Button>
-            <Box mt={5}>
-              <Stack
-                spacing={2}
-                backgroundColor={"White"}
-                borderWidth={1}
-                borderRadius="md"
-                p={4}
-              >
-                <Text fontWeight={"bold"}>タスクに記録する</Text>
-                <Text fontSize={"xs"} mb={2}>
-                  タスクを選択し、登録内容と進捗を入力してください。
-                </Text>
-                <Select
-                  placeholder="タスクを選択"
-                  backgroundColor={"white"}
-                  {...register("selectedTaskId")}
-                >
-                  {tasks.map((task) => (
-                    <option key={task.id} value={task.id}>
-                      {task.name}
-                    </option>
-                  ))}
-                </Select>
-                <Text>記録時間：{totalTimeStr}</Text>
-                <Text>やったこと</Text>
-                <Textarea {...register("memoText")} />
-                <Box gap={0} mb={2}>
-                  <Text>タスク全体の進捗</Text>
-                  <Flex alignItems={"flex-end"}>
-                    <Input
-                      type="number"
-                      min={0}
-                      max={100}
-                      {...register("progress")}
-                      w={"100px"}
-                    />
-                    <Text>%</Text>
-                  </Flex>
-                </Box>
-                <Button
-                  colorScheme="teal"
-                  width={"100%"}
-                  type="submit"
-                  isDisabled={!selectedTaskId}
-                >
-                  登録
-                </Button>
-              </Stack>
+            <Box
+              mt={5}
+              backgroundColor={"White"}
+              borderWidth={1}
+              borderRadius="md"
+              p={4}
+            >
+              <Accordion allowMultiple>
+                <AccordionItem border={"none"}>
+                  <AccordionButton>
+                    <Box
+                      as="span"
+                      flex="1"
+                      textAlign="left"
+                      fontWeight={"bold"}
+                    >
+                      タスクに記録する
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel>
+                    <Stack spacing={2}>
+                      <Text fontSize={"xs"} mb={2}>
+                        タスクを選択し、登録内容と進捗を入力してください。
+                      </Text>
+                      <Select
+                        placeholder="タスクを選択"
+                        backgroundColor={"white"}
+                        {...register("selectedTaskId")}
+                      >
+                        {tasks.map((task) => (
+                          <option key={task.id} value={task.id}>
+                            {task.name}
+                          </option>
+                        ))}
+                      </Select>
+                      <Text>記録時間：{totalTimeStr}</Text>
+                      <Text>やったこと</Text>
+                      <Textarea {...register("memoText")} />
+                      <Box gap={0} mb={2}>
+                        <Text>タスク全体の進捗</Text>
+                        <Flex alignItems={"flex-end"}>
+                          <Input
+                            type="number"
+                            min={0}
+                            max={100}
+                            {...register("progress")}
+                            w={"100px"}
+                          />
+                          <Text>%</Text>
+                        </Flex>
+                      </Box>
+                      <Button
+                        colorScheme="teal"
+                        width={"100%"}
+                        type="submit"
+                        isDisabled={!selectedTaskId}
+                      >
+                        登録
+                      </Button>
+                    </Stack>
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
             </Box>
           </Stack>
         </form>
