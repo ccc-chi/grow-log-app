@@ -108,7 +108,11 @@ export const TaskPreview: FC<Props> = memo((props) => {
           p={4}
           mb={5}
         >
-          {isEditing ? <Input {...register("title")} /> : clickedTask?.name}
+          {isEditing ? (
+            <Input backgroundColor={"white"} {...register("title")} />
+          ) : (
+            clickedTask?.name
+          )}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody p={0}>
@@ -119,7 +123,7 @@ export const TaskPreview: FC<Props> = memo((props) => {
             p={4}
           >
             {isEditing ? (
-              <Textarea {...register("content")} />
+              <Textarea backgroundColor={"white"} {...register("content")} />
             ) : (
               clickedTask?.content
             )}
