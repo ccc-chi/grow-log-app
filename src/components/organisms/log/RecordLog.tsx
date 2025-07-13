@@ -154,6 +154,11 @@ export const RecordLog: FC<Props> = memo((props) => {
     });
 
     reset();
+    // ストップウォッチの状態をリセット
+    setStopwatchStr("00:00:00");
+    setPastRecordedMs(0);
+    setRecordLogs([]);
+    setCurrentStartTime(undefined);
   };
 
   return (
