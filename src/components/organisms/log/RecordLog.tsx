@@ -17,6 +17,7 @@ import {
 import { FC, memo, useCallback, useEffect, useState } from "react";
 import { serializeTask, TaskWithLogs } from "../../../domain/TaskWithLogs";
 import { useForm } from "react-hook-form";
+import { formatMinutesToTimeStr } from "../../../utils/format";
 
 type TimerLog = {
   // ストップウォッチ用
@@ -58,21 +59,14 @@ export const RecordLog: FC<Props> = memo((props) => {
       ];
       setRecordLogs(newLog);
       // ストップウォッチ用に「過去の合計時間」を保持する
-      setPastRecordedMs((prev) => prev + diffMs);
+      setPastRecordedMs((prev) => prev + diffMs); // prev（最新の pastRecordedMs）に diffMs を足す
     }
   };
   //-- 合計時間を出す
-  const [totalTimeStr, setTotalTimeStr] = useState("0時間00分");
-  const totalTime = useCallback((logs: TimerLog[]) => {
-    const totalMs = logs.reduce((sum, log) => sum + log.diffMs, 0);
-    const totalMinutes = Math.floor(totalMs / 1000 / 60);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-    return `${hours}時間${minutes.toString().padStart(2, "0")}分`;
+  const totalTimeMs = useCallback((logs: TimerLog[]) => {
+    return logs.reduce((sum, log) => sum + log.diffMs, 0);
   }, []);
-  useEffect(() => {
-    setTotalTimeStr(totalTime(recordLogs));
-  }, [recordLogs, totalTime]);
+  const logsTotalTime = Math.floor(totalTimeMs(recordLogs) / 1000 / 60);
 
   //-- ストップウォッチを作る
   const [stopwatchStr, setStopwatchStr] = useState("00:00:00");
@@ -81,8 +75,8 @@ export const RecordLog: FC<Props> = memo((props) => {
     if (!isRecording || !currentStartTime) return;
     const timerId = setInterval(() => {
       const now = Date.now();
-      const diffMs = now - currentStartTime.getTime();
-      const totalMs = pastRecordedMs + diffMs;
+      const diffMs = now - currentStartTime.getTime(); // ５秒経過した = 現在（例：10:00:05）- スタートした時間（例：10:00:00）
+      const totalMs = pastRecordedMs + diffMs; // 経過時間 = 過去の記録時間 + ５秒（追加）
 
       // 時間計算
       const totalSeconds = Math.floor(totalMs / 1000);
@@ -120,12 +114,15 @@ export const RecordLog: FC<Props> = memo((props) => {
   const toast = useToast(); // 登録完了のトースト
   const addRecordTask = () => {
     const { selectedTaskId, progress, memoText } = getValues();
+    const totalTime = Math.floor(
+      recordLogs.reduce((sum, log) => sum + log.diffMs, 0) / 1000 / 60
+    );
     const updatedTaskWithLogs = tasks.map((task) => {
       if (task.id === selectedTaskId) {
         const newLog = {
           id: `${Date.now()}-${Math.random()}`,
           date: todayStr,
-          totalTime: totalTimeStr,
+          totalTime: totalTime,
           memo: memoText,
         };
         return {
@@ -225,7 +222,9 @@ export const RecordLog: FC<Props> = memo((props) => {
                           </option>
                         ))}
                       </Select>
-                      <Text>記録時間：{totalTimeStr}</Text>
+                      <Text>
+                        記録時間： {formatMinutesToTimeStr(logsTotalTime)}
+                      </Text>
                       <Text>やったこと</Text>
                       <Textarea {...register("memoText")} />
                       <Box gap={0} mb={2}>

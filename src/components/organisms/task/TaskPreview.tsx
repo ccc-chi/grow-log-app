@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, memo, useState } from "react";
+import { FC, memo, useState } from "react";
 import {
   Box,
   Button,
@@ -20,6 +20,7 @@ import {
   serializeTask,
   TaskFormInput,
 } from "../../../domain/TaskWithLogs";
+import { formatMinutesToTimeStr } from "../../../utils/format";
 
 type Props = {
   clickedTask: TaskWithLogs | null;
@@ -33,7 +34,6 @@ export const TaskPreview: FC<Props> = memo((props) => {
   const { clickedTask, tasks, setTasks, onClose } = props;
 
   const [editTask, setEditTask] = useState<TaskWithLogs | null>(clickedTask);
-  const [progress, setProgress] = useState<number>(clickedTask?.progress || 0);
   // RHF 初期値を設定
   const { handleSubmit, control, getValues, register } = useForm<TaskFormInput>(
     {
@@ -61,7 +61,6 @@ export const TaskPreview: FC<Props> = memo((props) => {
       content: content,
       start: start,
       end: end,
-      progress: progress,
     };
     console.log("更新されたタスク:", updatedTask);
     setEditTask(updatedTask);
@@ -84,16 +83,21 @@ export const TaskPreview: FC<Props> = memo((props) => {
     onClose();
   };
 
-  // progressの数字を管理する
-  const handleProgressChange = (value: string) => {
-    const num = Number(value);
-    if (!isNaN(num) && num >= 1 && num <= 100) {
-      setProgress(Number(num));
-    } else {
-      setProgress(0);
-      return;
-    }
-  };
+  //-- タスクの累積時間を計算
+  const logsTotalTime =
+    clickedTask?.logs?.reduce((sum, log) => sum + log.totalTime, 0) || 0;
+
+  // // progressの数字を管理する
+  // const [progress, setProgress] = useState<number>(clickedTask?.progress || 0);
+  // const handleProgressChange = (value: string) => {
+  //   const num = Number(value);
+  //   if (!isNaN(num) && num >= 1 && num <= 100) {
+  //     setProgress(Number(num));
+  //   } else {
+  //     setProgress(0);
+  //     return;
+  //   }
+  // };
 
   //-- タイトルとコンテンツを編集できるように
   const [isEditing, setIsEditing] = useState(false);
@@ -146,14 +150,11 @@ export const TaskPreview: FC<Props> = memo((props) => {
 
             <Flex align={"center"} gap={2} my={2}>
               <Text>進捗:</Text>
-              <Input
-                w={"80px"}
-                value={progress}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleProgressChange(e.target.value)
-                }
-              />
-              <Text>%</Text>
+              <Text>{clickedTask?.progress}%</Text>
+            </Flex>
+            <Flex align={"center"} gap={2} my={2}>
+              <Text>累積時間:</Text>
+              <Text>{formatMinutesToTimeStr(logsTotalTime)}</Text>
             </Flex>
             <Box my={4} textAlign={"right"}>
               <Button type="submit">更新</Button>
