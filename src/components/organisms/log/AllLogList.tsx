@@ -2,6 +2,7 @@ import { FC, memo } from "react";
 import { Box, Text } from "@chakra-ui/react";
 import { CalendarIcon, ChatIcon, TimeIcon } from "@chakra-ui/icons";
 import { TaskWithLogs } from "../../../domain/TaskWithLogs";
+import { formatMinutesToTimeStr } from "../../../utils/format";
 
 type Props = {
   tasks: TaskWithLogs[];
@@ -42,7 +43,7 @@ export const AllLogList: FC<Props> = memo((props) => {
                       <CalendarIcon /> {log.date}
                     </Text>
                     <Text className="time">
-                      <TimeIcon /> {log.totalTime}
+                      <TimeIcon /> {formatMinutesToTimeStr(log.totalTime)}
                     </Text>
                     <Text className="memo">
                       <ChatIcon /> {log.memo}

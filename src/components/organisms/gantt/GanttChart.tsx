@@ -26,6 +26,7 @@ export const GanttChart: FC<Props> = memo((props) => {
   const [clickedTask, setClickedTask] = useState<TaskWithLogs | null>(null);
   const ganttBarClick = (task: Task) => {
     setClickedTask(task as TaskWithLogs);
+    console.log("クリックされたタスク:", task);
     onOpen();
   };
 

@@ -21,7 +21,7 @@ export type TaskWithLogs = {
   logs?: {
     id: string;
     date: string;
-    totalTime: string;
+    totalTime: number;
     memo: string;
   }[];
 };
