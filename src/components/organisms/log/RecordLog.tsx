@@ -241,6 +241,7 @@ export const RecordLog: FC<Props> = memo((props) => {
                         </Flex>
                       </Box>
                       <Button
+                        data-testid="recordLogButton"
                         colorScheme="teal"
                         width={"100%"}
                         type="submit"

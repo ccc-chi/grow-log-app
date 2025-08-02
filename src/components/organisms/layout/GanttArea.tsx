@@ -66,7 +66,9 @@ export const GanttArea: FC<Props> = memo((props) => {
     <>
       <GanttChart tasks={tasks} setTasks={setTasks} />
       <Flex gap={5}>
-        <Button onClick={onOpen}>タスクを登録</Button>
+        <Button onClick={onOpen} data-testid="buttonAddTask">
+          タスクを登録
+        </Button>
       </Flex>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

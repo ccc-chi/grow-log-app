@@ -33,23 +33,29 @@ export const TaskForm: FC<Props> = memo((props) => {
   });
 
   return (
-    <Box maxW={"500px"}>
+    <Box maxW={"500px"} py={5}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack>
           <FormControl isInvalid={!!errors.title}>
             <Input
               placeholder="タイトル"
+              data-testid="taskTitleInput"
               {...register("title", { required: "タイトルを入力してください" })}
             />
-            <FormErrorMessage>{errors.title?.message}</FormErrorMessage>
+            <FormErrorMessage data-testid="titleError">
+              {errors.title?.message}
+            </FormErrorMessage>
           </FormControl>
 
           <FormControl isInvalid={!!errors.content}>
             <Textarea
               placeholder="内容"
+              data-testid="taskContentInput"
               {...register("content", { required: "内容を入力してください" })}
             />
-            <FormErrorMessage>{errors.content?.message}</FormErrorMessage>
+            <FormErrorMessage data-testid="contentError">
+              {errors.content?.message}
+            </FormErrorMessage>
           </FormControl>
 
           <DateInput control={control} name={"start"} label={"開始日"} />
@@ -60,7 +66,12 @@ export const TaskForm: FC<Props> = memo((props) => {
             <Input w={"100px"} type="number" {...register("targetTime", {})} />
             <Text>時間</Text>
           </Flex> */}
-          <Button colorScheme="blue" type="submit">
+          <Button
+            data-testid="taskFormButton"
+            type="submit"
+            colorScheme="teal"
+            mt={5}
+          >
             登録
           </Button>
         </Stack>
